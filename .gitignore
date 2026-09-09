@@ -1,0 +1,23 @@
+# Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Go build output
+/bin/
+/build/
+/out/
+
+# Test and coverage
+coverage.out
+*.cover
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Dependency cache (optional if you prefer not to track generated files)
+# vendor/
