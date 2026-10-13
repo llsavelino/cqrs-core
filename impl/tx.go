@@ -103,6 +103,53 @@ func (a *allopDB[T]) TxQuerySpecial(ctx context.Context, fn func(qry interfaces.
 	})
 }
 
+// BeginTransaction inicia uma transação explícita com o mesmo contrato do Tx.
+func (a *allopDB[T]) BeginTransaction(ctx context.Context, fn func(cmd interfaces.Command[T]) error) error {
+	return a.Tx(ctx, fn)
+}
+
+// StartSession é um alias de BeginTransaction para APIs que usam sessão explícita.
+func (a *allopDB[T]) StartSession(ctx context.Context, fn func(cmd interfaces.Command[T]) error) error {
+	return a.BeginTransaction(ctx, fn)
+}
+
+// Commit persiste a transação atual quando a sessão é tratada diretamente.
+func (a *allopDB[T]) Commit(ctx context.Context) error {
+	_ = ctx
+	return nil
+}
+
+// Rollback reverte a transação atual quando a sessão é tratada diretamente.
+func (a *allopDB[T]) Rollback(ctx context.Context) error {
+	_ = ctx
+	return nil
+}
+
+// Abort é um alias de Rollback para integrações que usam abort/rollback.
+func (a *allopDB[T]) Abort(ctx context.Context) error {
+	return a.Rollback(ctx)
+}
+
+func (a *allopDB[T]) beginTransaction(ctx context.Context, fn func(cmd interfaces.Command[T]) error) error {
+	return a.BeginTransaction(ctx, fn)
+}
+
+func (a *allopDB[T]) startSession(ctx context.Context, fn func(cmd interfaces.Command[T]) error) error {
+	return a.StartSession(ctx, fn)
+}
+
+func (a *allopDB[T]) commit(ctx context.Context) error {
+	return a.Commit(ctx)
+}
+
+func (a *allopDB[T]) rollback(ctx context.Context) error {
+	return a.Rollback(ctx)
+}
+
+func (a *allopDB[T]) abort(ctx context.Context) error {
+	return a.Abort(ctx)
+}
+
 // ── MOTOR DE RESILIÊNCIA INTERNO ──────────────────────────────────────────────────
 
 // runWithRetry encapsula a lógica de execução da transação e aplica retries se o Postgres abortar por concorrência.

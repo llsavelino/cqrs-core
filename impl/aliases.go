@@ -160,26 +160,3 @@ func (a *allopDB[T]) Archive(ctx context.Context, id string) (*T, error) {
 func (a *allopDB[T]) ListDeleted(ctx context.Context, opts ...interfaces.QueryOpt) ([]T, error) {
 	return a.OnlyListDeleted(ctx, opts...)
 }
-
-func (a *allopDB[T]) BeginTransaction(ctx context.Context, fn func(cmd interfaces.Command[T]) error) error {
-	return a.Tx(ctx, fn)
-}
-
-func (a *allopDB[T]) StartSession(ctx context.Context, fn func(cmd interfaces.Command[T]) error) error {
-	return a.Tx(ctx, fn)
-}
-
-func (a *allopDB[T]) Commit(ctx context.Context) error {
-	_ = ctx
-	return nil
-}
-
-func (a *allopDB[T]) Rollback(ctx context.Context) error {
-	_ = ctx
-	return nil
-}
-
-func (a *allopDB[T]) Abort(ctx context.Context) error {
-	_ = ctx
-	return nil
-}
