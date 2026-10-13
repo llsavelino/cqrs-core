@@ -411,34 +411,4 @@ func (a *allopDB[T]) Restore(ctx context.Context, id string) (*T, error) {
 
 // ─── Save ─────────────────────────────────────────────────────────────────────
 
-func (a *allopDB[T]) Save(ctx context.Context, entity *T) (*T, error) {
-	if err := a.init(ctx); err != nil {
-		return nil, err
-	}
-	if entity == nil {
-		return nil, errValidation("entity must not be nil")
-	}
-
-	a.j.mu.Lock()
-	defer a.j.mu.Unlock()
-
-	if err := a.runSerializableTx(ctx, func(tx *gorm.DB) error {
-		if err := tx.Model(entity).Select("id").First(new(T)).Error; err != nil {
-			return err
-		}
-		if err := tx.Model(entity).Select("*").Omit("id").Save(entity).Error; err != nil {
-			return err
-		}
-		if err := a.invalidateAfterWrite(ctx, extractID(entity)); err != nil {
-			return fmt.Errorf("cache invalidation failed: %w", err)
-		}
-		return nil
-	}); err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errNotFound(err)
-		}
-		return nil, errInternal("save failed", err)
-	}
-
-	return entity, nil
-}
+func (a *allopDB[T]) Save(ctx context.Context, entity *T) (*T, error) {}
